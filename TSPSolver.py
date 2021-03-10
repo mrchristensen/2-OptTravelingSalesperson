@@ -126,7 +126,7 @@ class TSPSolver:
 		end_time = time.time()
 		results['cost'] = bssf.cost if routeFound else math.inf
 		results['time'] = end_time - start_time
-		results['count'] = route.len()
+		results['count'] = len(route)
 		results['soln'] = bssf
 		results['max'] = None
 		results['total'] = None
