@@ -38,7 +38,7 @@ class TSPSolver:
         ncities = len(cities)
         foundTour = False
         count = 0
-        bssf = None
+        best_solution = None
         start_time = time.time()
         while not foundTour and time.time() - start_time < time_allowance:
             # create a random permutation
@@ -47,16 +47,16 @@ class TSPSolver:
             # Now build the route using the random permutation
             for i in range(ncities):
                 route.append(cities[perm[i]])
-            bssf = TSPSolution(route)
+            best_solution = TSPSolution(route)
             count += 1
-            if bssf.cost < np.inf:
+            if best_solution.cost < np.inf:
                 # Found a valid route
                 foundTour = True
         end_time = time.time()
-        results['cost'] = bssf.cost if foundTour else math.inf
+        results['cost'] = best_solution.cost if foundTour else math.inf
         results['time'] = end_time - start_time
         results['count'] = count
-        results['soln'] = bssf
+        results['soln'] = best_solution
         results['max'] = None
         results['total'] = None
         results['pruned'] = None
@@ -139,4 +139,44 @@ class TSPSolver:
 	'''
 
     def fancy(self, time_allowance=60.0):
-        pass
+        results = {}
+
+        sol_to_beat = self.greedy()["soln"]
+
+        route_to_beat = sol_to_beat.route.copy()
+
+        # route_to_beat = sol_to_beat.enumerateEdges()
+        # bssf
+
+        start_time = time.time()
+
+        improved = True
+        iter = 1
+        while improved:
+            print("Iteration num: %s" % iter)
+            iter += 1
+
+            for i in range(1, len(route_to_beat)-2):
+                improved = False
+                for j in range(i+1, len(route_to_beat)):
+                    if j-i == 1:
+                        continue
+                    new_route = route_to_beat.copy()
+                    new_route[i:j] = route_to_beat[j-1:i-1:-1]
+                    new_sol = TSPSolution(new_route)
+
+                    if new_sol.cost < sol_to_beat.cost:
+                        sol_to_beat = new_sol
+                        route_to_beat = new_route
+                        improved = True
+
+        end_time = time.time()
+
+        results['cost'] = sol_to_beat.cost #  if routeFound else math.inf
+        results['time'] = end_time - start_time
+        results['count'] = len(route_to_beat)  # Todo: This probs shouldn't be the len of rout_to_beat
+        results['soln'] = sol_to_beat
+        results['max'] = None
+        results['total'] = None
+        results['pruned'] = None
+        return results
