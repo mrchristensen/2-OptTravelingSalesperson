@@ -138,41 +138,72 @@ class TSPSolver:
 		algorithm</returns> 
 	'''
 
-    def fancy(self, time_allowance=60.0):
+        def fancy(self, time_allowance=60.0):
         results = {}
-
         sol_to_beat = self.greedy()["soln"]
-
         route_to_beat = sol_to_beat.route.copy()
-
-        # route_to_beat = sol_to_beat.enumerateEdges()
-        # bssf
-
         start_time = time.time()
-
         improved = True
         iter = 1
         while improved:
             print("Iteration num: %s" % iter)
             iter += 1
 
-            for i in range(1, len(route_to_beat)-2):
+            for i in range(1, len(route_to_beat) - 2):
                 improved = False
-                for j in range(i+1, len(route_to_beat)):
-                    if j-i == 1:
+                for j in range(i + 1, len(route_to_beat)):
+                    if j - i == 1:
                         continue
-                    new_route = route_to_beat.copy()
-                    new_route[i:j] = route_to_beat[j-1:i-1:-1]
-                    new_sol = TSPSolution(new_route)
-
-                    if new_sol.cost < sol_to_beat.cost:
-                        sol_to_beat = new_sol
-                        route_to_beat = new_route
-                        improved = True
-
+                    else:
+                        for k in range(j + 1, len(route_to_beat)):
+                            if k - j == 1:
+                                continue
+                            # 6 cases
+                            # AB, CD, EF - original
+                            # AB, CF, ED - swap D & F
+                            new_route = route_to_beat.copy()
+                            new_route[j:k] = route_to_beat[k - 1:j - 1:-1]  # swaps D & F
+                            new_sol = TSPSolution(new_route)
+                            if new_sol.cost < sol_to_beat.cost:
+                                sol_to_beat = new_sol
+                                route_to_beat = new_route
+                                improved = True
+                            # AD, CB, EF - swap B & D
+                            new_route = route_to_beat.copy()
+                            new_route[i:j] = route_to_beat[j - 1:i - 1:-1]  # swaps B & D
+                            new_sol = TSPSolution(new_route)
+                            if new_sol.cost < sol_to_beat.cost:
+                                sol_to_beat = new_sol
+                                route_to_beat = new_route
+                                improved = True
+                            # AD, CF, EB - swap B & F, then F & D
+                            new_route = route_to_beat.copy()
+                            new_route[i:k] = route_to_beat[k - 1:i - 1:-1]  # swaps B & F
+                            new_route[j:k] = route_to_beat[k - 1:j - 1:-1]  # swaps D & F
+                            if new_sol.cost < sol_to_beat.cost:
+                                sol_to_beat = new_sol
+                                route_to_beat = new_route
+                                improved = True
+                            # AF, CD, EB - swap B & F
+                            new_route = route_to_beat.copy()
+                            new_route[i:k] = route_to_beat[k - 1:i - 1:-1]  # swaps B & F
+                            new_sol = TSPSolution(new_route)
+                            if new_sol.cost < sol_to_beat.cost:
+                                sol_to_beat = new_sol
+                                route_to_beat = new_route
+                                improved = True
+                            # AF, CB, ED - swap B & F, then B & D
+                            new_route = route_to_beat.copy()
+                            new_route[i:k] = route_to_beat[k - 1:i - 1:-1]  # swaps B & F
+                            new_route[i:j] = route_to_beat[j - 1:i - 1:-1]  # swaps B & D
+                            new_sol = TSPSolution(new_route)
+                            if new_sol.cost < sol_to_beat.cost:
+                                sol_to_beat = new_sol
+                                route_to_beat = new_route
+                                improved = True
         end_time = time.time()
 
-        results['cost'] = sol_to_beat.cost #  if routeFound else math.inf
+        results['cost'] = sol_to_beat.cost  # if routeFound else math.inf
         results['time'] = end_time - start_time
         results['count'] = len(route_to_beat)  # Todo: This probs shouldn't be the len of rout_to_beat
         results['soln'] = sol_to_beat
