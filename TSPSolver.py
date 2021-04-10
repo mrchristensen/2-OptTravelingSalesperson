@@ -138,7 +138,7 @@ class TSPSolver:
 		algorithm</returns> 
 	'''
 
-        def fancy(self, time_allowance=60.0):
+    def fancy(self, time_allowance=60.0):
         results = {}
         sol_to_beat = self.greedy()["soln"]
         route_to_beat = sol_to_beat.route.copy()
@@ -146,16 +146,14 @@ class TSPSolver:
         improved = True
         iter = 1
         while improved:
-            print("Iteration num: %s" % iter)
             iter += 1
-
             for i in range(1, len(route_to_beat) - 2):
                 improved = False
-                for j in range(i + 1, len(route_to_beat)):
+                for j in range(i+1, len(route_to_beat)):
                     if j - i == 1:
                         continue
                     else:
-                        for k in range(j + 1, len(route_to_beat)):
+                        for k in range(j+1, len(route_to_beat)):
                             if k - j == 1:
                                 continue
                             # 6 cases
@@ -179,7 +177,7 @@ class TSPSolver:
                             # AD, CF, EB - swap B & F, then F & D
                             new_route = route_to_beat.copy()
                             new_route[i:k] = route_to_beat[k - 1:i - 1:-1]  # swaps B & F
-                            new_route[j:k] = route_to_beat[k - 1:j - 1:-1]  # swaps D & F
+                            new_route[k:j] = route_to_beat[j - 1:k - 1:-1]  # swaps D & F
                             if new_sol.cost < sol_to_beat.cost:
                                 sol_to_beat = new_sol
                                 route_to_beat = new_route
@@ -195,7 +193,7 @@ class TSPSolver:
                             # AF, CB, ED - swap B & F, then B & D
                             new_route = route_to_beat.copy()
                             new_route[i:k] = route_to_beat[k - 1:i - 1:-1]  # swaps B & F
-                            new_route[i:j] = route_to_beat[j - 1:i - 1:-1]  # swaps B & D
+                            new_route[j:i] = route_to_beat[i - 1:j - 1:-1]  # swaps B & D
                             new_sol = TSPSolution(new_route)
                             if new_sol.cost < sol_to_beat.cost:
                                 sol_to_beat = new_sol
