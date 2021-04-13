@@ -137,8 +137,8 @@ class TSPSolver:
     def fancy(self, time_allowance=60.0):
         initial_greedy_sol = self.greedy()["soln"]
 
-        results = self.two_opt(initial_greedy_sol, time_allowance)
-        # results = self.three_opt(initial_greedy_sol, time_allowance)
+        # results = self.two_opt(initial_greedy_sol, time_allowance)
+        results = self.three_opt(initial_greedy_sol, time_allowance)
 
         print("cost: ", results["cost"])
         print("time: ", results["time"])
@@ -156,8 +156,8 @@ class TSPSolver:
         while improved and time.time() - start_time < time_allowance:
             print("Iteration num: %s" % iter)
             iter += 1
+            improved = False
             for i in range(1, len(route_to_beat) - 2):
-                improved = False
                 for j in range(i + 1, len(route_to_beat)):
                     if j - i == 1:
                         continue
@@ -187,8 +187,8 @@ class TSPSolver:
         while improved and time.time() - start_time < time_allowance:
             print("Iteration num: %s" % iter)
             iter += 1
+            improved = False
             for i in range(1, len(route_to_beat) - 2):
-                improved = False
                 for j in range(i + 1, len(route_to_beat)):
                     if j - i == 1:
                         continue
