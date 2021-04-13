@@ -145,23 +145,27 @@ class TSPSolver:
 
         return results
 
+    # Time Complexity: O(c) * O(n) * O(n) = O(c* n^2) = O(n^2)
+    # Space Complexity: O(n) + O(n) + O(n) = O(3n) = O(n)
     def two_opt(self, soln, time_allowance):
-        sol_to_beat = soln
-        route_to_beat = sol_to_beat.route.copy()
+        sol_to_beat = soln  # Space: O(n)
+        route_to_beat = sol_to_beat.route.copy()  # Space Complexity: O(n)
 
         start_time = time.time()
         improved = True
         count = 0
         iter = 1
+
+        # Time Complexity: O(c) (which is bounded to a small const by the efficiency of greedy - should be less than 5)
         while improved and time.time() - start_time < time_allowance:
             print("Iteration num: %s" % iter)
             iter += 1
             improved = False
-            for i in range(1, len(route_to_beat) - 2):
+            for i in range(1, len(route_to_beat) - 2):  # Time Complexity: O(n)
                 for j in range(i + 1, len(route_to_beat)):
                     if j - i == 1:
                         continue
-                    new_route = route_to_beat.copy()
+                    new_route = route_to_beat.copy()  # Space Complexity: O(n)
                     new_route[i:j] = route_to_beat[j - 1:i - 1:-1]
                     new_sol = TSPSolution(new_route)
                     if new_sol.cost < sol_to_beat.cost:
@@ -176,30 +180,34 @@ class TSPSolver:
 
         return results
 
+    # Time Complexity:  O(c) * O(n) * O(n) * O(n) = O(c * n^3) = O(n^3)
+    # Space Complexity: O(n) + O(n) + O(n) = O(3n) = O(n)
     def three_opt(self, soln, time_allowance):
-        sol_to_beat = soln
-        route_to_beat = sol_to_beat.route.copy()
+        sol_to_beat = soln  # Space Complexity: O(n)
+        route_to_beat = sol_to_beat.route.copy()  # Space Complexity: O(n)
 
         start_time = time.time()
         improved = True
         count = 0
         iter = 1
+
+        # Time Complexity: O(c) (which is bounded to a small const by the efficiency of greedy - should be less than 5)
         while improved and time.time() - start_time < time_allowance:
             print("Iteration num: %s" % iter)
             iter += 1
             improved = False
-            for i in range(1, len(route_to_beat) - 2):
-                for j in range(i + 1, len(route_to_beat)):
+            for i in range(1, len(route_to_beat) - 2):  # Time Complexity: O(n)
+                for j in range(i + 1, len(route_to_beat)):  # Time Complexity: O(n)
                     if j - i == 1:
                         continue
                     else:
-                        for k in range(j + 1, len(route_to_beat)):
+                        for k in range(j + 1, len(route_to_beat)):  # Time Complexity: O(n)
                             if k - j == 1:
                                 continue
                             # 6 cases
                             # AB, CD, EF - original
                             # AB, CF, ED - swap D & F
-                            new_route = route_to_beat.copy()
+                            new_route = route_to_beat.copy()  # Space Complexity: O(n)
                             new_route[j:k] = route_to_beat[k - 1:j - 1:-1]  # swaps D & F
                             new_solA = TSPSolution(new_route)
                             # AD, CB, EF - swap B & D
