@@ -84,7 +84,7 @@ class TSPSolver:
         city = startCity
         route.append(city)
         start_time = time.time()
-        while routeFound is False:
+        while routeFound is False and time.time() - start_time < time_allowance:
             lowestCost = math.inf
             lowestCity = None
             for neighbor in cities:
@@ -139,18 +139,56 @@ class TSPSolver:
 	'''
 
     def fancy(self, time_allowance=60.0):
+        initial_greedy_sol = self.greedy()["soln"]
+
+        # results = self.two_opt(initial_greedy_sol, time_allowance)
+        results = self.three_opt(initial_greedy_sol, time_allowance)
+
+        print("cost: ", results["cost"])
+        print("time: ", results["time"])
+
+        return results
+
+    def two_opt(self, soln, time_allowance):
         results = {}
-        slow_soln = self.defaultRandomTour()
-        twoopt_soln = slow_soln.copy()
-        print("slow_soln cost: " , slow_soln["cost"])
-        two_opt = self.two_opt(twoopt_soln["soln"])
-        print("two_opt cost: " , two_opt["cost"])
-        sol_to_beat = slow_soln["soln"]
+        sol_to_beat = soln
         route_to_beat = sol_to_beat.route.copy()
         start_time = time.time()
         improved = True
         iter = 1
-        while improved:
+        while improved and time.time() - start_time < time_allowance:
+            print("Iteration num: %s" % iter)
+            iter += 1
+            for i in range(1, len(route_to_beat) - 2):
+                improved = False
+                for j in range(i + 1, len(route_to_beat)):
+                    if j - i == 1:
+                        continue
+                    new_route = route_to_beat.copy()
+                    new_route[i:j] = route_to_beat[j - 1:i - 1:-1]
+                    new_sol = TSPSolution(new_route)
+                    if new_sol.cost < sol_to_beat.cost:
+                        sol_to_beat = new_sol
+                        route_to_beat = new_route
+                        improved = True
+        end_time = time.time()
+        results['cost'] = sol_to_beat.cost  # if routeFound else math.inf
+        results['time'] = end_time - start_time
+        results['count'] = len(route_to_beat)  # Todo: This probs shouldn't be the len of rout_to_beat
+        results['soln'] = sol_to_beat
+        results['max'] = None
+        results['total'] = None
+        results['pruned'] = None
+        return results
+
+    def three_opt(self, soln, time_allowance):
+        results = {}
+        sol_to_beat = soln
+        route_to_beat = sol_to_beat.route.copy()
+        start_time = time.time()
+        improved = True
+        iter = 1
+        while improved and time.time() - start_time < time_allowance:
             print("Iteration num: %s" % iter)
             iter += 1
             for i in range(1, len(route_to_beat) - 2):
@@ -192,40 +230,6 @@ class TSPSolver:
                                 sol_to_beat = array[0]
                                 route_to_beat = array[0].route
                                 improved = True
-
-        end_time = time.time()
-
-        results['cost'] = sol_to_beat.cost  # if routeFound else math.inf
-        results['time'] = end_time - start_time
-        results['count'] = len(route_to_beat)  # Todo: This probs shouldn't be the len of rout_to_beat
-        results['soln'] = sol_to_beat
-        results['max'] = None
-        results['total'] = None
-        results['pruned'] = None
-        return results
-
-    def two_opt(self, soln):
-        results = {}
-        sol_to_beat = soln
-        route_to_beat = sol_to_beat.route.copy()
-        start_time = time.time()
-        improved = True
-        iter = 1
-        while improved:
-            print("Iteration num: %s" % iter)
-            iter += 1
-            for i in range(1, len(route_to_beat) - 2):
-                improved = False
-                for j in range(i + 1, len(route_to_beat)):
-                    if j - i == 1:
-                        continue
-                    new_route = route_to_beat.copy()
-                    new_route[i:j] = route_to_beat[j - 1:i - 1:-1]
-                    new_sol = TSPSolution(new_route)
-                    if new_sol.cost < sol_to_beat.cost:
-                        sol_to_beat = new_sol
-                        route_to_beat = new_route
-                        improved = True
         end_time = time.time()
         results['cost'] = sol_to_beat.cost  # if routeFound else math.inf
         results['time'] = end_time - start_time
@@ -234,4 +238,5 @@ class TSPSolver:
         results['max'] = None
         results['total'] = None
         results['pruned'] = None
+
         return results
