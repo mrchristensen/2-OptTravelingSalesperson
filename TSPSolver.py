@@ -137,8 +137,8 @@ class TSPSolver:
     def fancy(self, time_allowance=60.0):
         initial_greedy_sol = self.greedy()["soln"]
 
-        # results = self.two_opt(initial_greedy_sol, time_allowance)
-        results = self.three_opt(initial_greedy_sol, time_allowance)
+        results = self.two_opt(initial_greedy_sol, time_allowance)
+        # results = self.three_opt(initial_greedy_sol, time_allowance)
 
         print("cost: ", results["cost"])
         print("time: ", results["time"])
