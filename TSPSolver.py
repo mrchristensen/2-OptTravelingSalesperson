@@ -73,20 +73,22 @@ class TSPSolver:
 		solution found, and three null values for fields not used for this 
 		algorithm</returns> 
 	'''
+    # Time Complexity: O(n) * O(n) = O(n^2)
+    # Space Complexity: O(n) + O(n) + O(n) = O(3n) = O(n)
     def greedy(self, time_allowance=60.0):
         results = {}
         routeFound = False
         route = []
-        listOfPossibleStartCities = self._scenario.getCities().copy()
-        cities = self._scenario.getCities()
-        startCity = listOfPossibleStartCities.pop()
+        listOfPossibleStartCities = self._scenario.getCities().copy()  # Space Complexity: O(n)
+        cities = self._scenario.getCities()  # Space Complexity: O(n)
+        startCity = listOfPossibleStartCities.pop()  # Space Complexity: O(n)
         city = startCity
         route.append(city)
         start_time = time.time()
-        while routeFound is False and time.time() - start_time < time_allowance:
+        while routeFound is False and time.time() - start_time < time_allowance:  # Time Complexity: O(n)
             lowestCost = math.inf
             lowestCity = None
-            for neighbor in cities:
+            for neighbor in cities:  # Time Complexity: O(n)
                 if neighbor is city:
                     continue
                 if city.costTo(neighbor) < lowestCost and (neighbor not in route):
