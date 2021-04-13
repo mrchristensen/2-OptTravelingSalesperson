@@ -73,7 +73,6 @@ class TSPSolver:
 		solution found, and three null values for fields not used for this 
 		algorithm</returns> 
 	'''
-
     def greedy(self, time_allowance=60.0):
         results = {}
         routeFound = False
@@ -106,7 +105,6 @@ class TSPSolver:
                 route.append(lowestCity)
                 city = lowestCity
 
-
         end_time = time.time()
         results['cost'] = bssf.cost if routeFound else math.inf
         results['time'] = end_time - start_time
@@ -125,24 +123,22 @@ class TSPSolver:
 		not include the initial BSSF), the best solution found, and three more ints: 
 		max queue size, total number of states created, and number of pruned states.</returns> 
 	'''
-
     def branchAndBound(self, time_allowance=60.0):
         pass
 
     ''' <summary>
-		This is the entry point for the algorithm you'll write for your group project.
-		</summary>
-		<returns>results dictionary for GUI that contains three ints: cost of best solution, 
-		time spent to find best solution, total number of solutions found during search, the 
-		best solution found.  You may use the other three field however you like.
-		algorithm</returns> 
-	'''
-
+    	This is the entry point for the algorithm you'll write for your group project.
+    	</summary>
+    	<returns>results dictionary for GUI that contains three ints: cost of best solution, 
+    	time spent to find best solution, total number of solutions found during search, the 
+    	best solution found.  You may use the other three field however you like.
+    	algorithm</returns> 
+    '''
     def fancy(self, time_allowance=60.0):
         initial_greedy_sol = self.greedy()["soln"]
 
-        # results = self.two_opt(initial_greedy_sol, time_allowance)
-        results = self.three_opt(initial_greedy_sol, time_allowance)
+        results = self.two_opt(initial_greedy_sol, time_allowance)
+        # results = self.three_opt(initial_greedy_sol, time_allowance)
 
         print("cost: ", results["cost"])
         print("time: ", results["time"])
@@ -150,11 +146,12 @@ class TSPSolver:
         return results
 
     def two_opt(self, soln, time_allowance):
-        results = {}
         sol_to_beat = soln
         route_to_beat = sol_to_beat.route.copy()
+
         start_time = time.time()
         improved = True
+        count = 0
         iter = 1
         while improved and time.time() - start_time < time_allowance:
             print("Iteration num: %s" % iter)
@@ -170,23 +167,22 @@ class TSPSolver:
                     if new_sol.cost < sol_to_beat.cost:
                         sol_to_beat = new_sol
                         route_to_beat = new_route
+                        count += 1
                         improved = True
         end_time = time.time()
-        results['cost'] = sol_to_beat.cost  # if routeFound else math.inf
-        results['time'] = end_time - start_time
-        results['count'] = len(route_to_beat)  # Todo: This probs shouldn't be the len of rout_to_beat
-        results['soln'] = sol_to_beat
-        results['max'] = None
-        results['total'] = None
-        results['pruned'] = None
+
+        results = {'cost': sol_to_beat.cost, 'time': end_time - start_time, 'count': count, 'soln': sol_to_beat,
+                   'max': None, 'total': None, 'pruned': None}
+
         return results
 
     def three_opt(self, soln, time_allowance):
-        results = {}
         sol_to_beat = soln
         route_to_beat = sol_to_beat.route.copy()
+
         start_time = time.time()
         improved = True
+        count = 0
         iter = 1
         while improved and time.time() - start_time < time_allowance:
             print("Iteration num: %s" % iter)
@@ -230,13 +226,10 @@ class TSPSolver:
                                 sol_to_beat = array[0]
                                 route_to_beat = array[0].route
                                 improved = True
+                                count += 1
         end_time = time.time()
-        results['cost'] = sol_to_beat.cost  # if routeFound else math.inf
-        results['time'] = end_time - start_time
-        results['count'] = len(route_to_beat)  # Todo: This probs shouldn't be the len of rout_to_beat
-        results['soln'] = sol_to_beat
-        results['max'] = None
-        results['total'] = None
-        results['pruned'] = None
+
+        results = {'cost': sol_to_beat.cost, 'time': end_time - start_time, 'count': count, 'soln': sol_to_beat,
+                   'max': None, 'total': None, 'pruned': None}
 
         return results
